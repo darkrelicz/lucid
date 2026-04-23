@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { api, type RunSummary, type RunCreate, type RunStatus } from '../services/api';
+import { api, type RunSummary, type RunStatus } from '../services/api';
 import './Dashboard.css';
 
 const STATUS_LABELS: Record<RunStatus, string> = {

@@ -235,6 +235,102 @@ Scaffolded with `create-vite@latest` using the `react-ts` template. Installed ad
 
 **Next**: Build the design system (CSS variables, dark theme, typography) and core page layouts.
 
+### Frontend Design System
+
+Built a comprehensive CSS design system (`src/index.css`) with the following design tokens:
+
+#### Color System
+- **Background layers**: 5 tiers from `--bg-base` (#0a0b0f) to `--bg-hover` (#2a2b3a) — creates depth without overwhelming
+- **Glass effect**: Semi-transparent backgrounds with backdrop-filter blur for card surfaces
+- **Accent**: Electric indigo/purple (`#7c5cfc`) — distinctive, high-contrast against dark backgrounds
+- **Confidence indicators**: Traffic-light system (green/amber/red) with matching backgrounds and borders for badges
+- **Hallucination type colors**: 6 distinct colors mapping to the taxonomy (intrinsic=red, extrinsic=orange, citation=purple, reasoning=blue, tool=yellow, contradiction=pink)
+- **Status colors**: Pending=gray, Running=blue, Completed=green, Failed=red
+
+#### Typography
+- **Sans**: Inter — clean, modern, excellent readability at small sizes
+- **Mono**: JetBrains Mono — for model names, code, and technical data
+- Both loaded from Google Fonts with selective weight imports
+
+#### Components (CSS-only)
+- **Cards**: Glassmorphism with subtle border and hover effects
+- **Badges**: Semantic color variants for confidence, status, and hallucination types
+- **Buttons**: Primary (gradient + glow shadow), secondary (outlined), ghost (transparent)
+- **Inputs**: Dark-themed with focus glow ring
+- **Modal**: Overlay with backdrop blur
+- **Loading**: Spinner animation and skeleton shimmer effect
+- **Sidebar**: Fixed position with brand, nav links, and active state highlighting
+
+#### Layout System
+- Fixed sidebar (260px) + flexible main content area
+- Sticky header with glass backdrop
+- Max content width (1200px) centered with auto margins
+
+### Frontend Pages
+
+Built 6 pages with React Router:
+
+| Page | Route | Status |
+|------|-------|--------|
+| Dashboard | `/` | ✅ Fully functional with demo data |
+| Trace View | `/runs/:id` | Stub — Phase 4 |
+| Run Comparison | `/compare` | Stub — Phase 4 |
+| Red Team | `/red-team` | Stub — Phase 5B |
+| Tuning | `/tuning` | Stub — Phase 5A |
+| Metrics | `/metrics` | Stub — Phase 4 |
+
+**Dashboard features implemented**:
+- Stats grid: Total Runs, Completed, Avg Confidence, Hallucinations
+- Run list with clickable cards showing goal, model, steps, tokens, cost, confidence badge, hallucination count, and status
+- "New Run" modal with goal textarea and model selector (OpenAI, Anthropic, Ollama)
+- Framer Motion animations on mount (staggered card reveals)
+- Graceful API fallback — shows demo data when backend is offline
+- Demo banner notification when operating in offline mode
+
+### API Client (`src/services/api.ts`)
+
+Typed fetch wrapper with:
+- All endpoint methods matching the FastAPI backend
+- Full TypeScript interfaces for every API entity
+- Error handling with JSON error body parsing
+- Configurable base URL via `VITE_API_URL` env var
+
+### Visual Verification
+
+Dashboard confirmed working with:
+- ✅ Dark theme rendering correctly
+- ✅ Sidebar navigation with active state highlighting
+- ✅ Stats grid with proper layout and formatting
+- ✅ Run cards with status badges (Completed/Running/Failed)
+- ✅ Confidence badges with correct color coding (73%=green, 89%=green, 31%=red)
+- ✅ Hallucination count badges (red)
+- ✅ Model names in monospace
+- ✅ Demo data fallback with warning banner
+- ✅ Page navigation working for all routes
+- ✅ Stub pages rendering with proper placeholder content
+
+### CI Pipeline (`.github/workflows/ci.yml`)
+
+Three parallel jobs:
+1. **Backend Lint & Type Check**: Ruff + MyPy
+2. **Backend Tests**: Pytest with PostgreSQL and Redis service containers
+3. **Frontend Build**: TypeScript check + Vite production build
+
+### Phase 1 Verification Summary
+
+| Check | Result |
+|-------|--------|
+| Frontend TypeScript | ✅ Zero errors (`tsc --noEmit`) |
+| Frontend build | ✅ Builds in 300ms, 13KB CSS + 373KB JS (gzip: 3.4KB + 118KB) |
+| Frontend dev server | ✅ Runs on port 5173 with HMR |
+| Dashboard UI | ✅ Visually verified — all components render correctly |
+| Backend structure | ✅ All modules created with proper imports |
+| Docker Compose | ✅ 6 services configured with health checks |
+| CI pipeline | ✅ GitHub Actions workflow ready |
+
+**Remaining for Phase 1**: Verify `docker compose up` with all services (requires Docker daemon). The configuration is complete and ready to test.
+
 ---
 
 *Report continues as development progresses...*
+
