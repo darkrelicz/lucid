@@ -1,6 +1,7 @@
 services:
   # ── Backend API ──────────────────────────────────────────────
   api:
+    container_name: lucid-api
     build:
       context: ./backend
       dockerfile: ../Dockerfile.api
@@ -25,6 +26,7 @@ services:
 
   # ── Celery Worker ────────────────────────────────────────────
   worker:
+    container_name: lucid-worker
     build:
       context: ./backend
       dockerfile: ../Dockerfile.api
@@ -48,6 +50,7 @@ services:
 
   # ── Frontend ─────────────────────────────────────────────────
   frontend:
+    container_name: lucid-frontend
     build:
       context: .
       dockerfile: Dockerfile.frontend
@@ -62,6 +65,7 @@ services:
 
   # ── PostgreSQL ───────────────────────────────────────────────
   postgres:
+    container_name: lucid-db
     image: postgres:16-alpine
     ports:
       - "5432:5432"
@@ -80,6 +84,7 @@ services:
 
   # ── Redis ────────────────────────────────────────────────────
   redis:
+    container_name: lucid-redis
     image: redis:7-alpine
     ports:
       - "6379:6379"
@@ -94,6 +99,7 @@ services:
 
   # ── ChromaDB ─────────────────────────────────────────────────
   chromadb:
+    container_name: lucid-chromadb
     image: chromadb/chroma:latest
     ports:
       - "8100:8000"

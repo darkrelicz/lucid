@@ -8,7 +8,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.database import engine
+from app.database import Base, engine
 from app.api.runs import router as runs_router
 from app.api.hallucinations import router as hallucinations_router
 
@@ -16,16 +16,27 @@ from app.api.hallucinations import router as hallucinations_router
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:  # type: ignore[type-arg]
     """Application startup and shutdown lifecycle."""
-    # Startup: verify connections
+    # Startup: verify connections and create tables
     app.state.services = {}
 
-    # Check database
+    # Check database and auto-create tables
     try:
+        # Import all models so Base.metadata knows about them
+        from app.models.trace import Run, TraceStep  # noqa: F401
+        from app.models.hallucination import Claim, VerificationResult  # noqa: F401
+
+        # Create all tables if they don't exist
         async with engine.begin() as conn:
-            await conn.execute(conn.default_dialect.statement_compiler(conn.dialect, None))  # type: ignore[arg-type]
+            await conn.run_sync(Base.metadata.create_all)
+
+        # Verify connection with a simple query
+        async with engine.connect() as conn:
+            from sqlalchemy import text
+            await conn.execute(text("SELECT 1"))
+
         app.state.services["database"] = "connected"
-    except Exception:
-        app.state.services["database"] = "unavailable"
+    except Exception as e:
+        app.state.services["database"] = f"error: {e}"
 
     # Check Redis
     try:
